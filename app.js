@@ -4,8 +4,10 @@ const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const dotenv = require('dotenv');
 const path = require('path');
+const cors = require('cors');
 
 dotenv.config();
+const matchingRouter = require('./routes/matching');
 const { connect } = require('./database/index');
 
 
@@ -13,6 +15,7 @@ const app = express();
 app.set('port', process.env.PORT || 3002);
 connect();
 
+app.use(cors());
 app.use(morgan('dev'));
 app.use('/', express.static(path.join(__dirname, 'public')));  // '/' 경로가 루트면 생략 가능  app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
@@ -29,10 +32,7 @@ app.use(session({
   name: 'session-cookie'
 }));
 
-app.get('/', (req, res) => {
-  res.send('하이')
-});
-
+app.use('/', matchingRouter);
 
 
 
