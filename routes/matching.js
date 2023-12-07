@@ -14,17 +14,10 @@ router.get('/', async (req, res) => {
   });
 });
 
-router.get('/matchingInsert', async (req, res) => {
-  await db.collection('matching').insertOne({ 
-    id: "badminton5",
-    title: "연수 체육공원에서 배드민턴 같이 치실분~",
-    content: "연수 체육공원에서 배드민턴 같이 치실분구합니다~",
-    selectDate: "2023-11-08",
-    gender: "여",
-    joinPersonnel: "4",
-    game: "복식경기",
-    district: "인천"
-  });
+router.post('/matchingInsert', async (req, res) => {
+  const result = req.body;
+  console.log(result);
+  await db.collection('matching').insertOne({ ...result });
   res.send('저장성공')  
 
 })
