@@ -5,14 +5,19 @@ const session = require('express-session');
 const dotenv = require('dotenv');
 const path = require('path');
 const cors = require('cors');
+const paasport = require('passport');
+
 
 dotenv.config();
 const matchingRouter = require('./routes/matching');
 const { connect } = require('./database/index');
+const passportConfig = require('./passport');
+
 
 
 const app = express();
 app.set('port', process.env.PORT || 3002);
+passportConfig();
 connect();
 
 app.use(cors());
@@ -31,6 +36,9 @@ app.use(session({
   },
   name: 'session-cookie'
 }));
+app.use(paasport.initialize());
+app.use(paasport.session());
+
 
 app.use('/', matchingRouter);
 
