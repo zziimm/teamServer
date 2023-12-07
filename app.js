@@ -8,6 +8,7 @@ const cors = require('cors');
 
 dotenv.config();
 const matchingRouter = require('./routes/matching');
+const communityRouter = require('/routes/community')
 const { connect } = require('./database/index');
 
 
@@ -33,6 +34,7 @@ app.use(session({
 }));
 
 app.use('/', matchingRouter);
+app.use('/community', communityRouter);
 
 
 
