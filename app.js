@@ -52,5 +52,5 @@ app.use((err, req, res, next) => {
 });
 
 app.listen(app.get('port'), () => {
-  console.log(app.get('port') + '번에서 서버 실행 중');
+  console.log(app.get('port') + '번에서 서버 실행 중입니다.');
 });
