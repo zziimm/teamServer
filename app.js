@@ -10,6 +10,7 @@ const paasport = require('passport');
 
 dotenv.config();
 const matchingRouter = require('./routes/matching');
+const userRouter = require('./routes/user');
 const { connect } = require('./database/index');
 const passportConfig = require('./passport');
 
@@ -20,7 +21,10 @@ app.set('port', process.env.PORT || 3002);
 passportConfig();
 connect();
 
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:3000',
+  credentials: true
+}));
 app.use(morgan('dev'));
 app.use('/', express.static(path.join(__dirname, 'public')));  // '/' 경로가 루트면 생략 가능  app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
@@ -32,15 +36,20 @@ app.use(session({
   secret: process.env.COOKIE_SECRET,
   cookie: {
     httpOnly: true,
-    secure: false,  // 개발단계에서는 false로
+    secure: false,
   },
   name: 'session-cookie'
 }));
 app.use(paasport.initialize());
 app.use(paasport.session());
 
+app.use((req, res, next) => {
+  res.locals.user = req.user;
+  next();
+});
 
 app.use('/', matchingRouter);
+app.use('/user', userRouter);
 
 
 

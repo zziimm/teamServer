@@ -1,25 +1,17 @@
 const passport = require('passport');
-const local = require('./localStrategy'); // 로컬 로그인 전략(=로그인 시 어떻게 처리할지 동작을 정함)
+const local = require('./localStrategy'); 
 const { ObjectId } = require('mongodb');
 
 const { client } = require('../database/index');
-const db = client.db('board'); // board 데이터베이스에 연결 (애초에 파일이 없어도 생성되면서 연결됨)
+const db = client.db('minton');
 
-// passport를 이해하는 핵심 부분 작성
+
 module.exports = () => {
   // req.login()으로 로그인 시 실행되며, 세션 객체(req.session)에 어떤 데이터를 저장할지 정함
   // 즉, 세션 만들기가 자동 실행되고 쿠키도 알아서 보내줌
   passport.serializeUser((user, done) => {
-    console.log(user); // 로그인 중인 사용자 정보
-
-    // 첫번째 인자값: 에러 발생 시 에러 값
-    // 두번째 인자값: 세션에 저장할 데이터(일단 서버 메모리에 저장됨)
-    // done(null, { id: user._id, username: user.username }); // 여러 값을 넣고 싶으면 객체로
-
-    // id만 저장하는 이유?
-    // 로그인 시 사용자 데이터를 세션에 저장하는데 세션에 사용자 정보를 모두 저장하면
-    // 세션의 용량이 커지고 데이터 일관성에 문제가 발생하므로 아이디만 저장
-    done(null, user._id); // _id만 저장
+    console.log('유저'+user._id);
+    done(null, user._id);
   });
 
   // 각 요청마다 실행되며, passport.session 미들웨어가 이 메서드를 호출
@@ -28,10 +20,10 @@ module.exports = () => {
   // 조회한 정보를 req.user에 저장하므로 앞으로 req.user를 통해 로그인한 사용자의 정보를 가져올 수 있음
   // 세션 쿠키를 까서 세션 ID로 세션 객체를 찾아서 그 안에 데이터를 첫번째 매개변수로 전달
   passport.deserializeUser(async (id, done) => {
-    console.log(id); // 세션에 저장한 내용
+    console.log('세션저장'+id); // 세션에 저장한 내용
 
     try {
-      const user = await db.collection('user').findOne({ _id: new ObjectId(id) });
+      const user = await db.collection('userInfo').findOne({ _id: new ObjectId(id) });
       done(null, user); // req.user에 저장
       // 이제 아무데서나 req.user를 쓰면 현재 로그인한 사용자의 정보를 쓸 수 있음
     } catch (err) {
