@@ -16,6 +16,10 @@ const passportConfig = require('./passport');
 
 
 
+// 라우터 가져오기
+const registerRouter = require('./routes/register')
+
+
 const app = express();
 app.set('port', process.env.PORT || 3002);
 passportConfig();
@@ -30,6 +34,7 @@ app.use('/', express.static(path.join(__dirname, 'public')));  // '/' 경로가 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser(process.env.COOKIE_SECRET));
+app.use(express.json())
 app.use(session({
   resave: false,
   saveUninitialized: false,
@@ -48,6 +53,7 @@ app.use((req, res, next) => {
   next();
 });
 
+// 라우터를 미들웨어로 등록
 app.use('/', matchingRouter);
 app.use('/user', userRouter);
 
