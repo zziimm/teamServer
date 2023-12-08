@@ -5,22 +5,57 @@ const db = client.db('minton');
 
 const router = express.Router();
 
-// router.get('/', async (req, res) => {
-//   const communityData = await db.collection('community').find({}).toArray();
-//   res.json({
-//     flag: true,
-//     message: '성공적으로 데이터를 가져왔습니다.',
-//     data: communityData
-//   });
-// });
-
-router.get('/communityInsert', async (req, res) => {
-  await db.collection('community').insertOne({ 
-    title:'몽몽몽몽',
-    content: '고고고고'
+router.get('/', async (req, res) => { // 커뮤니티 리스트 겟요청
+  const communityData = await db.collection('community').find({}).toArray();
+  res.json({
+    flag: true,
+    message: '성공적으로 데이터를 가져왔습니다.',
+    communityData: communityData
   });
-  res.send('저장성공')  
+});
 
+router.post('/communityInsert', async (req, res) => { // 커뮤니티 인서트 포스트요청
+  const { id, title, content, imagePath} = req.body;
+  console.log(id, title, content);
+  // JS Object 형태
+  try {
+    await db.collection('community').insertOne({
+      id ,
+      title ,
+      content ,
+      imagePath 
+    });
+    res.send('데이터 저장 완료');
+  } catch (err) {
+    console.error(err);
+  }
+});
+
+router.get('/communityComment', async (req, res) => {
+  try {
+    const comments = await db.collection('communityComment').find({}).toArray();
+    res.json({
+      flag: true,
+      message: '성공적으로 데이터를 가져왔습니다.',
+      comments: comments
+    });
+  } catch (error) {
+    
+  }
+})
+
+router.post('/communityComment', async( req, res ) => {
+  const { id, text } = req.body;
+  console.log(id, text);
+  try {
+    await db.collection('communityComment').insertOne({
+      id,
+      text
+    });
+    res.send('댓글입력 완료');
+  } catch (err) {
+    console.error(err);
+  }
 })
 
 module.exports = router;
