@@ -45,8 +45,8 @@ router.get('/communityComment', async (req, res) => {
 })
 
 router.post('/communityComment', async( req, res ) => {
-  const { id, text } = req.body;
-  console.log(id, text);
+  const { id, text } = req.body.addComment;
+  console.log(req.body);
   try {
     await db.collection('communityComment').insertOne({
       id,
