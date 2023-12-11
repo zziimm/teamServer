@@ -18,8 +18,6 @@ const passportConfig = require('./passport');
 
 // 라우터 가져오기
 const registerRouter = require('./routes/register')
-const clubRouter = require('./routes/club')
-
 
 
 const app = express();
@@ -58,10 +56,6 @@ app.use((req, res, next) => {
 // 라우터를 미들웨어로 등록
 app.use('/', matchingRouter);
 app.use('/user', userRouter);
-app.use('/club', clubRouter)
-app.use('/register', registerRouter)
-
-
 
 
 
