@@ -19,7 +19,6 @@ router.post('/matchingInsert', async (req, res) => {
   console.log(result);
   await db.collection('matching').insertOne({ ...result });
   res.send('저장성공')  
-
 })
 
 module.exports = router;
