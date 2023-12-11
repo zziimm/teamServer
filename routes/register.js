@@ -46,6 +46,7 @@ router.post('/', async (req, res) => {
         }
 
         const hash = await bcrypt.hash(passwd, 12)
+        
         await db.collection('userInfo').insertOne({
             userId,
             passwd: hash,
@@ -57,6 +58,8 @@ router.post('/', async (req, res) => {
             flag: true,
             message: '회원 가입 성공'
         })
+
+
     } catch (error) {
         console.error(error);
         res.json({
