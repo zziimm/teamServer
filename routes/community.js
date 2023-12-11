@@ -1,6 +1,7 @@
 const express = require('express');
 
 const { client } = require('../database/index');
+const { ObjectId } = require('bson');
 const db = client.db('minton');
 
 const router = express.Router();
@@ -23,7 +24,7 @@ router.post('/communityInsert', async (req, res) => { // 커뮤니티 인서트 
       id ,
       title ,
       content ,
-      imagePath 
+      imagePath
     });
     res.send('데이터 저장 완료');
   } catch (err) {
@@ -39,18 +40,20 @@ router.get('/communityComment', async (req, res) => {
       message: '성공적으로 데이터를 가져왔습니다.',
       comments: comments
     });
-  } catch (error) {
-    
-  }
+  } catch (err) {
+    console.error(err);
+  };
 })
 
 router.post('/communityComment', async( req, res ) => {
-  const { id, text } = req.body.addComment;
   console.log(req.body);
+  console.log(req.user);
+  const { addComment, postId } = req.body;
   try {
     await db.collection('communityComment').insertOne({
-      id,
-      text
+      postId,
+      addComment,
+      userId: req.user.userId
     });
     res.send('댓글입력 완료');
   } catch (err) {

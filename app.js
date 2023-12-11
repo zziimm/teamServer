@@ -58,6 +58,7 @@ app.use((req, res, next) => {
 app.use('/', matchingRouter);
 app.use('/community', communityRouter);
 app.use('/user', userRouter);
+app.use('/register', registerRouter)
 
 
 
