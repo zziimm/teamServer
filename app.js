@@ -57,7 +57,8 @@ app.use((req, res, next) => {
 // 라우터를 미들웨어로 등록
 app.use('/', matchingRouter);
 app.use('/user', userRouter);
-app.use('/myCalender', myCalendarRouter);
+app.use('/myCalendar', myCalendarRouter);
+app.use('/register', registerRouter);
 
 
 

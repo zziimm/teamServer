@@ -1,4 +1,5 @@
 const express = require('express');
+const { ObjectId } = require('mongodb');
 
 const { client } = require('../database/index');
 const db = client.db('minton');
@@ -26,6 +27,16 @@ router.post('/matchingInsert', async (req, res) => {
   console.log(result);
   await db.collection('matching').insertOne({ ...result });
   res.send('저장성공')  
-})
+});
+
+router.get('/matchingPost/:id', async (req, res) => {
+  const result = await db.collection('matching').findOne({ _id: new ObjectId(req.params.id) });
+  console.log(result);
+  res.json({
+    flag: true,
+    message: '상세페이지 불러오기 성공',
+    data: result
+  })
+});
 
 module.exports = router;
