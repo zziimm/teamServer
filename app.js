@@ -10,6 +10,7 @@ const paasport = require('passport');
 
 dotenv.config();
 const matchingRouter = require('./routes/matching');
+const communityRouter = require('./routes/community')
 const userRouter = require('./routes/user');
 const { connect } = require('./database/index');
 const passportConfig = require('./passport');
@@ -55,6 +56,7 @@ app.use((req, res, next) => {
 
 // 라우터를 미들웨어로 등록
 app.use('/', matchingRouter);
+app.use('/community', communityRouter);
 app.use('/user', userRouter);
 
 
