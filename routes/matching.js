@@ -39,4 +39,46 @@ router.get('/matchingPost/:id', async (req, res) => {
   })
 });
 
+router.delete('/deleteMatching/:id', async (req, res) => {
+  try {
+    await db.collection('matching').deleteOne({ _id: new ObjectId(req.params.id) });
+    await db.collection('myCalendar').deleteOne({ postId: req.params.id })
+    res.json({
+      flag: true,
+      message: '삭제 성공'
+    });
+  } catch (err) {
+    res.json({
+      flag: false,
+      message: '삭제 실패'
+    });
+  }
+});
+
+router.patch('/editMatchPost/:id', async (req, res) => {
+  console.log(req.body);
+  const { title, content, selectDate, district, joinPersonnel, game, gender } = req.body;
+  try {
+    await db.collection('matching').updateOne({
+      _id: new ObjectId(req.params.id)
+    }, { $set: {
+      title,
+      content,
+      selectDate,
+      district,
+      joinPersonnel,
+      game,
+      gender
+    }
+  });
+  await db.collection('myCalendar').updateOne({ user: new ObjectId(req.user._id) }, { $set: { title, start: selectDate } });
+    res.json({
+      flag: true,
+      message: '수정 완료'
+    });
+  } catch (err) {
+    
+  }
+});
+
 module.exports = router;

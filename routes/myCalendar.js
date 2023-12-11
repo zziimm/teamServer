@@ -27,7 +27,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-router.post('/insert', (req, res, next) => {
+router.post('/insert/:id', (req, res, next) => {
   const title = req.body.title;
   const start = req.body.start;
   const end = req.body.end;
@@ -38,7 +38,8 @@ router.post('/insert', (req, res, next) => {
         title,
         start,
         end,
-        user: req.user._id
+        user: req.user._id,
+        postId: req.params.id
       });
       res.json({
         flag: true,
