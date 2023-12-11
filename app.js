@@ -12,6 +12,7 @@ dotenv.config();
 const matchingRouter = require('./routes/matching');
 const communityRouter = require('./routes/community')
 const userRouter = require('./routes/user');
+const myCalendarRouter = require('./routes/myCalendar');
 const { connect } = require('./database/index');
 const passportConfig = require('./passport');
 
@@ -58,6 +59,8 @@ app.use((req, res, next) => {
 app.use('/', matchingRouter);
 app.use('/community', communityRouter);
 app.use('/user', userRouter);
+app.use('/myCalendar', myCalendarRouter);
+app.use('/register', registerRouter);
 
 
 
