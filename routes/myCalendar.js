@@ -1,4 +1,6 @@
 const express = require('express');
+const { ObjectId } = require('mongodb');
+
 
 const { client } = require('../database/index');
 const db = client.db('minton');
@@ -27,19 +29,18 @@ router.get('/', async (req, res) => {
   }
 });
 
-router.post('/insert/:id', (req, res, next) => {
+router.post('/directInsert', async (req, res, next) => {
   const title = req.body.title;
   const start = req.body.start;
   const end = req.body.end;
   
   try {
     if (req.user) {
-      db.collection('myCalendar').insertOne({
+      await db.collection('myCalendar').insertOne({
         title,
         start,
         end,
         user: req.user._id,
-        postId: req.params.id
       });
       res.json({
         flag: true,
@@ -56,16 +57,42 @@ router.post('/insert/:id', (req, res, next) => {
   }
 });
 
-
-router.get('/myCalenderInsert', async (req, res) => {
-  await db.collection('myCalendar').insertOne({
-    title: "같이 칠사람 구합니다~~",
-    start: "2023-12-08",
-  });
-  res.send('완료')
+router.post('/insert/:id', async (req, res, next) => {
+  const title = req.body.title;
+  const start = req.body.start;
+  const district = req.body.district;
+  const game = req.body.game;
+  const joinPersonnel = req.body.joinPersonnel;
+  const joinMember = req.body.joinMember;
+  try {
+      await db.collection('myCalendar').insertOne({
+        title,
+        start,
+        user: req.user._id,
+        postId: new ObjectId(req.params.id)
+      });
+      await db.collection('matching').updateOne({ _id: new ObjectId(req.params.id) }, { $push: { joinMember: req.user.userId } });
+      await db.collection('myMatchList').insertOne({
+        title,
+        start,
+        district,
+        game,
+        joinPersonnel,
+        joinMember,
+        user: req.user._id,
+        postId: new ObjectId(req.params.id)
+      });
+      res.json({
+        flag: true,
+        message: '등록이 완료되었습니다!'
+      });
+  } catch (err) {
+    res.json({
+      flag: false,
+      message: err.message,
+    });
+  }
 });
-
-
 
 
 module.exports = router;

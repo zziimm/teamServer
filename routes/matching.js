@@ -24,8 +24,19 @@ router.get('/', async (req, res) => {
 
 router.post('/matchingInsert', async (req, res) => {
   const result = req.body;
-  console.log(result);
-  await db.collection('matching').insertOne({ ...result });
+  const resultId = await db.collection('matching').insertOne({ ...result, joinMember: [req.user.userId] });
+  await db.collection('myMatchList').insertOne({
+    ...result,
+    user: req.user._id,
+    joinMember: [req.user.userId],
+    postId: resultId.insertedId
+  });
+  await db.collection('myCalendar').insertOne({
+    title: req.body.title,
+    start: req.body.selectDate,
+    user: req.user._id,
+    postId: resultId.insertedId
+  });
   res.send('저장성공')  
 });
 
@@ -42,7 +53,8 @@ router.get('/matchingPost/:id', async (req, res) => {
 router.delete('/deleteMatching/:id', async (req, res) => {
   try {
     await db.collection('matching').deleteOne({ _id: new ObjectId(req.params.id) });
-    await db.collection('myCalendar').deleteOne({ postId: req.params.id })
+    await db.collection('myCalendar').deleteMany({ postId: new ObjectId(req.params.id) })
+    await db.collection('myMatchList').deleteMany({ postId: new ObjectId(req.params.id) })
     res.json({
       flag: true,
       message: '삭제 성공'
@@ -77,7 +89,7 @@ router.patch('/editMatchPost/:id', async (req, res) => {
       message: '수정 완료'
     });
   } catch (err) {
-    
+    console.error(err);
   }
 });
 
