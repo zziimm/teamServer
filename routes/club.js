@@ -2,62 +2,59 @@ const express = require('express')
 const bcrypt = require('bcrypt')
 const { client } = require('../database/index');
 
+
+
 const db = client.db('minton') // board 데이터베이스에 연결
 
 const router = express.Router()
 
-
-
 router.get('/', async (req, res) => {
-    try {
-        const clubData = await db.collection('club').find({}).toArray()
-        console.log(clubData);
+  try {
+    const clubData = await db.collection('club').find({}).toArray();
+    res.json({
+      flag: true,
+      message: '가져오기 성공',
+      data: clubData
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      flag: false,
+      message: error.message
+    });
+  }
+});
 
-        
-        res.json({
-            flag: true,
-            message: '가져오기 성공',
-            data: clubData
-        })
-        
+
+router.get('/:teamName', async (req, res) => {
+  const teamName = req.params.teamName
+
+    try {
+      if (!teamName) {
+        throw new Error('소속된 클럽이 없습니다')
+      }
+
+      const data = await db.collection('club').findOne({ teamName })
+      console.log('--------------------------------------');
+      console.log(data);
+
+      res.json({
+        flag: true,
+        message: '데이터 가져오기 성공',
+        data: data
+      })
+
+
     } catch (error) {
-        console.error(error);
-        res.json({
+      res.json({
         flag: false,
         message: error.message
-        })
+      })
     }
-})
-
-router.post('/', async (req, res) => {
-    const teamName = req.body.teamName
-    const maindistrict = req.body.maindistrict
-    const members = req.body.members
-    const addMembers = req.body.addMembers
-    console.log(addMembers);
-    // addMembers의 값을  members의 배열에 추가
-
-    const updatedMembers = [members, addMembers];
     
-    try {
-        await db.collection('club').insertOne({
-            teamName,
-            maindistrict,
-            members: updatedMembers,
-            
-        })
+    
+  })
+    
 
-        res.json({
-            flag: true,
-            message: '클럽 개설 성공'
-        })
-    } catch (error) {
-        console.error(error);
-        res.json({
-        flag: false,
-        message: error.message
-    })
-    }
-})
 
 module.exports = router;
