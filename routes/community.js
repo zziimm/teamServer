@@ -14,9 +14,25 @@ router.get('/', async (req, res) => { // 커뮤니티 리스트 겟요청
     communityData: communityData
   });
 });
+router.patch('/', async (req, res) => {
+  try {
+    const like = req.body.like;
+    const id = req.body.id
+    console.log(req.body);
+    await db.collection('community').updateOne({
+      // 여기서 뭘 해야 하나 습..내일하자
+      _id: id
+    }, {
+      $set: { like: like }
+    })
+    res.send('조하효')
+  } catch (err) {
+    console.error(err);
+  }
+})
 
-router.post('/communityInsert', async (req, res) => { // 커뮤니티 인서트 포스트요청
-  const { id, title, content, imagePath} = req.body;
+router.post('/communityInsert', async (req, res) => { // 커뮤니티 글 등록
+  const { id, title, content, imagePath, like} = req.body;
   console.log(id, title, content);
   // JS Object 형태
   try {
@@ -24,7 +40,8 @@ router.post('/communityInsert', async (req, res) => { // 커뮤니티 인서트 
       id ,
       title ,
       content ,
-      imagePath
+      imagePath,
+      like
     });
     res.send('데이터 저장 완료');
   } catch (err) {
@@ -32,7 +49,7 @@ router.post('/communityInsert', async (req, res) => { // 커뮤니티 인서트 
   }
 });
 
-router.get('/communityComment', async (req, res) => {
+router.get('/communityComment', async (req, res) => { // 댓글 겟요청
   try {
     const comments = await db.collection('communityComment').find({}).toArray();
     res.json({
@@ -45,13 +62,13 @@ router.get('/communityComment', async (req, res) => {
   };
 })
 
-router.post('/communityComment', async( req, res ) => {
+router.post('/communityComment', async( req, res ) => { // 댓글 등록
   console.log(req.body);
   console.log(req.user);
   const { addComment, postId } = req.body;
   try {
     await db.collection('communityComment').insertOne({
-      postId,
+      commentPostId: postId,
       addComment,
       userId: req.user.userId
     });
@@ -60,5 +77,9 @@ router.post('/communityComment', async( req, res ) => {
     console.error(err);
   }
 })
+
+
+
+
 
 module.exports = router;
