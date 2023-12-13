@@ -14,31 +14,33 @@ router.get('/', async (req, res) => { // 커뮤니티 리스트 겟요청
     communityData: communityData
   });
 });
-router.patch('/', async (req, res) => {
+router.patch('/', async (req, res) => {  // 커뮤니티 좋아요 패치요청
   try {
     const like = req.body.like;
     const id = req.body.id
     console.log(req.body);
-    await db.collection('community').updateOne({
-      // 여기서 뭘 해야 하나 습..내일하자
-      _id: id
+    const a = await db.collection('community').updateOne({
+      _id: new ObjectId(id)
     }, {
       $set: { like: like }
     })
-    res.send('조하효')
+    console.log(a);
+    res.json({
+      flag: true,
+      message: '좋아요',
+      like: a
+    });
   } catch (err) {
     console.error(err);
   }
 })
 
 router.post('/communityInsert', async (req, res) => { // 커뮤니티 글 등록
-  const { id, title, content, imagePath, like} = req.body;
-  console.log(id, title, content);
+  const { id,  content, imagePath, like} = req.body;
   // JS Object 형태
   try {
     await db.collection('community').insertOne({
       id ,
-      title ,
       content ,
       imagePath,
       like
@@ -49,7 +51,42 @@ router.post('/communityInsert', async (req, res) => { // 커뮤니티 글 등록
   }
 });
 
-router.get('/communityComment', async (req, res) => { // 댓글 겟요청
+router.post('/delete', async (req, res) => {  // 커뮤니티 게시글 삭제
+  console.log(req.body);
+  try {
+    const del = await db.collection('community').deleteOne({
+      _id: new ObjectId(req.body.postId)
+    });
+    res.json({
+      flag: true,
+      message: '삭제 완료',
+      del: del
+    });
+  } catch (err) {
+    console.error(err);
+  }
+})
+
+router.post('/edit', async (req, res) => { // 커뮤니티 게시글 수정
+  const { id,  content, imagePath} = req.body;
+  try {
+    const eidt = await db.collection('community').updateOne({
+      _id: new ObjectId(req.body.postId)
+    }, {
+      set$: { id },
+      set$: { content },
+      set$: { imagePath }
+    })
+    res.json({
+      flag: true,
+      message: '수정 완료',
+    });
+  } catch (error) {
+    
+  }
+})
+
+router.get('/communityComment', async (req, res) => { // 커뮤니티 댓글 겟요청
   try {
     const comments = await db.collection('communityComment').find({}).toArray();
     res.json({
@@ -62,7 +99,7 @@ router.get('/communityComment', async (req, res) => { // 댓글 겟요청
   };
 })
 
-router.post('/communityComment', async( req, res ) => { // 댓글 등록
+router.post('/communityComment', async( req, res ) => { // 커뮤니티 댓글 등록
   console.log(req.body);
   console.log(req.user);
   const { addComment, postId } = req.body;
