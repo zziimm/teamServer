@@ -82,6 +82,7 @@ router.post('/insert/:id', async (req, res, next) => {
         user: req.user._id,
         postId: new ObjectId(req.params.id)
       });
+      await db.collection('myMatchList').updateMany({ postId: new ObjectId(req.params.id) }, { $push: { joinMember: req.user.userId } });
       res.json({
         flag: true,
         message: '등록이 완료되었습니다!'
