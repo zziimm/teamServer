@@ -8,10 +8,12 @@ const router = express.Router();
 
 router.get('/', async (req, res) => { // 커뮤니티 리스트 겟요청
   const communityData = await db.collection('community').find({}).toArray();
+  const communityDataa = await db.collection('communityComment').find({}).toArray();
   res.json({
     flag: true,
     message: '성공적으로 데이터를 가져왔습니다.',
-    communityData: communityData
+    communityData,
+    communityDataa
   });
 });
 router.patch('/', async (req, res) => {  // 커뮤니티 좋아요 패치요청
@@ -45,7 +47,10 @@ router.post('/communityInsert', async (req, res) => { // 커뮤니티 글 등록
       imagePath,
       like
     });
-    res.send('데이터 저장 완료');
+    res.json({
+      flag: true,
+      message: '등록 완료',
+    });
   } catch (err) {
     console.error(err);
   }
@@ -67,22 +72,33 @@ router.post('/delete', async (req, res) => {  // 커뮤니티 게시글 삭제
   }
 })
 
-router.post('/edit', async (req, res) => { // 커뮤니티 게시글 수정
-  const { id,  content, imagePath} = req.body;
+router.get('/edit/:postId', async (req, res) => { // 커뮤니티 게시글 수정 get
+  try {
+    await db.collection('community').find({}).toArray();
+    res.json({
+      flag: true,
+      message: '성공적으로 데이터를 가져왔습니다.',
+    });
+  } catch (err) {
+    console.error(err);
+  }
+})
+router.post('/edit/:postId', async (req, res) => { // 커뮤니티 게시글 수정 post
+  const { content, imagePath} = req.body.communityInput;
   try {
     const eidt = await db.collection('community').updateOne({
-      _id: new ObjectId(req.body.postId)
+      _id: new ObjectId( req.params.postId )
+      
     }, {
-      set$: { id },
-      set$: { content },
-      set$: { imagePath }
+      $set: { content, imagePath },
+      // $set: { imagePath }
     })
     res.json({
       flag: true,
       message: '수정 완료',
     });
-  } catch (error) {
-    
+  } catch (err) {
+    console.error(err);
   }
 })
 
@@ -109,7 +125,30 @@ router.post('/communityComment', async( req, res ) => { // 커뮤니티 댓글 �
       addComment,
       userId: req.user.userId
     });
-    res.send('댓글입력 완료');
+    const rePost = await db.collection('communityComment').find({}).toArray();
+    res.json({
+      flag: true,
+      message: '댓글 등록 성공.',
+      rePost
+    });
+  } catch (err) {
+    console.error(err);
+  }
+});
+
+router.post('/communityComment/delete', async( req, res ) => {  // 커뮤니티 댓글 삭제
+  try {
+    await db.collection('communityComment').deleteOne({
+      _id: new ObjectId(req.body.commentPostId)
+    });
+    const commentDel = await db.collection('communityComment').find({
+      _id: new ObjectId(req.body.commentPostId)
+    }).toArray();
+    res.json({
+      flag: true,
+      message: '삭제 완료',
+      commentDel
+    });
   } catch (err) {
     console.error(err);
   }
@@ -118,5 +157,13 @@ router.post('/communityComment', async( req, res ) => { // 커뮤니티 댓글 �
 
 
 
+
+
+
+
+
+router.get('/del', async(req, res) => {
+  await db.collection('communityComment').deleteMany({})
+})
 
 module.exports = router;
