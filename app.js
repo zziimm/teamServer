@@ -22,6 +22,7 @@ const passportConfig = require('./passport');
 // 라우터 가져오기
 const registerRouter = require('./routes/register')
 const clubRouter = require('./routes/club')
+const clubInsertRouter = require('./routes/clubInsert')
 
 
 
@@ -66,6 +67,8 @@ app.use('/myCalendar', myCalendarRouter);
 app.use('/register', registerRouter);
 app.use('/club', clubRouter);
 app.use('/myPage', myPageRouter);
+app.use('/clubInsert', clubInsertRouter)
+
 
 
 

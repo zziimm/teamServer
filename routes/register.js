@@ -16,6 +16,8 @@ router.post('/', async (req, res) => {
     const passwd = req.body.passwd
     const nickname = req.body.nick
     const userIdRegex = /^[a-zA-Z0-9]{4,10}$/;
+    const teamName = req.body.teamName
+
 
     try {
         if (userId === '') {
@@ -46,10 +48,12 @@ router.post('/', async (req, res) => {
         }
 
         const hash = await bcrypt.hash(passwd, 12)
+
         await db.collection('userInfo').insertOne({
             userId,
             passwd: hash,
-            nickname
+            nickname,
+            teamName
         })
 
 
