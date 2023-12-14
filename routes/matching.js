@@ -12,7 +12,7 @@ router.get('/', async (req, res) => {
     res.json({
       flag: true,
       message: '성공적으로 데이터를 가져왔습니다.',
-      data: matchingData
+      data: matchingData,
     });
   } catch (err) {
     res.json({
