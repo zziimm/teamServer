@@ -113,7 +113,7 @@ router.post('/matchResult', async (req, res) => {
       console.log(winUser);
       console.log('22'+winMember);
 
-      if (winMember === undefined) {
+      if (winMember === undefined || winMember === null) {
         console.log('단식 확인실행');
         // 없으면
         const joinMemberWithOutMe = joinMember.filter(member => member !== winUser.userId);
