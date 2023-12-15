@@ -8,12 +8,12 @@ const router = express.Router();
 
 router.get('/', async (req, res) => { // 커뮤니티 리스트 겟요청
   const communityData = await db.collection('community').find({}).toArray();
-  const communityDataa = await db.collection('communityComment').find({}).toArray();
+  const commentNum = await db.collection('communityComment').find({}).toArray();
   res.json({
     flag: true,
     message: '성공적으로 데이터를 가져왔습니다.',
     communityData,
-    communityDataa
+    commentNum
   });
 });
 router.patch('/', async (req, res) => {  // 커뮤니티 좋아요 패치요청
@@ -153,14 +153,6 @@ router.post('/communityComment/delete', async( req, res ) => {  // 커뮤니티 
     console.error(err);
   }
 })
-
-
-
-
-
-
-
-
 
 router.get('/del', async(req, res) => {
   await db.collection('communityComment').deleteMany({})
