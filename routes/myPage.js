@@ -44,13 +44,19 @@ router.post('/cancelMatch', async (req, res) => {
   }
 });
 
+// forEach로 멤버수만큼 요청들어옴
 router.post('/winAlert', async (req, res) => {
+  const loginUser = req.user;
   try {
-    await db.collection('userInfo').updateOne({ userId: req.body.member }, { $set: { news: { name: "winOrLose", postId: req.body.postId, form: req.user._id } } });
-    res.json({
-      flag: true,
-      message: '매칭 결과 요청을 보냈습니다!'
-    });
+    if (req.body.game === "단식") {
+      await db.collection('userInfo').updateOne({ userId: req.body.member }, { $set: { news: { name: "winOrLose", postId: req.body.postId, form: req.user._id } } });
+      await db.collection('matching').updateOne({ _id: new ObjectId(req.body.postId) }, { $set: { resultConfirm: 1 } });
+      await db.collection('userInfo').updateOne({ _id: loginUser._id }, { $set: { check: 1 } });
+      res.json({
+        flag: true,
+        message: '매칭 결과 요청을 보냈습니다!'
+      });
+    } 
   } catch (err) {
     console.error(err);
     res.json({
@@ -68,14 +74,25 @@ router.post('/matchResult', async (req, res) => {
     const readyForConfirm = await db.collection('matching').findOne({ _id: new ObjectId(thisPostId) });
     const { joinMember, resultConfirm } = readyForConfirm;
     const joinMemberCount = joinMember.length;
+    console.log('joinMemberCount'+joinMemberCount);
+    console.log('resultConfirm'+resultConfirm);
     if (joinMemberCount == resultConfirm) {
       await db.collection('matching').deleteOne({ _id: new ObjectId(thisPostId) });
       await db.collection('myMatchList').deleteMany({ postId: new ObjectId(thisPostId) });
+      await db.collection('myCalendar').deleteMany({ postId: new ObjectId(thisPostId) });
       const thisUser = await db.collection('userInfo').findOne({ _id: loginUser._id });
+      const winUser = await db.collection('userInfo').findOne({ _id: thisUser.news.form });
+      console.log(winUser);
       
-      await db.collection('userInfo').updateOne({ _id: thisUser.news.form }, { $inc: { win: 1 } });
-      await db.collection('userInfo').updateOne({ _id: loginUser._id }, { $inc: { lose: 1 } });
-      await db.collection('userInfo').updateOne({ _id: loginUser._id }, { $pull: { news } });
+      const joinMemberWithOutMe = joinMember.filter(member => member !== winUser.userId)
+      console.log('joinMemberWithOutMe'+ joinMemberWithOutMe);
+      await db.collection('userInfo').updateOne({ _id: winUser._id }, { $inc: { win: 1 } });
+      await joinMemberWithOutMe.forEach(member => {
+        db.collection('userInfo').updateOne({ userId: member }, { $inc: { lose: 1 } });
+      });
+      await joinMemberWithOutMe.forEach(member => {
+        db.collection('userInfo').updateOne({ userId: member }, { $set: { news: '' } });
+      });
       res.json({
         flag: true,
         message: '결과가 등록되었습니다!'
