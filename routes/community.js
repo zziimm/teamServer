@@ -38,14 +38,15 @@ router.patch('/', async (req, res) => {  // 커뮤니티 좋아요 패치요청
 })
 
 router.post('/communityInsert', async (req, res) => { // 커뮤니티 글 등록
-  const { id,  content, imagePath, like} = req.body;
+  const { id,  content, imagePath, like, date} = req.body;
   // JS Object 형태
   try {
     await db.collection('community').insertOne({
       id ,
       content ,
       imagePath,
-      like
+      like,
+      date
     });
     res.json({
       flag: true,
