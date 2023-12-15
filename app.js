@@ -12,6 +12,8 @@ dotenv.config();
 const matchingRouter = require('./routes/matching');
 const communityRouter = require('./routes/community')
 const userRouter = require('./routes/user');
+const myCalendarRouter = require('./routes/myCalendar');
+const myPageRouter = require('./routes/myPage');
 const { connect } = require('./database/index');
 const passportConfig = require('./passport');
 
@@ -19,6 +21,9 @@ const passportConfig = require('./passport');
 
 // 라우터 가져오기
 const registerRouter = require('./routes/register')
+const clubRouter = require('./routes/club')
+const clubInsertRouter = require('./routes/clubInsert')
+
 
 
 const app = express();
@@ -31,7 +36,7 @@ app.use(cors({
   credentials: true
 }));
 app.use(morgan('dev'));
-app.use('/', express.static(path.join(__dirname, 'public')));  // '/' 경로가 루트면 생략 가능  app.use(express.static(path.join(__dirname, 'public')));
+app.use('/', express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser(process.env.COOKIE_SECRET));
@@ -58,7 +63,11 @@ app.use((req, res, next) => {
 app.use('/', matchingRouter);
 app.use('/community', communityRouter);
 app.use('/user', userRouter);
-app.use('/register', registerRouter)
+app.use('/myCalendar', myCalendarRouter);
+app.use('/register', registerRouter);
+app.use('/club', clubRouter);
+app.use('/myPage', myPageRouter);
+app.use('/clubInsert', clubInsertRouter)
 
 
 
