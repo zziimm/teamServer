@@ -42,7 +42,7 @@ router.post('/communityInsert', async (req, res) => { // 커뮤니티 글 등록
   // JS Object 형태
   try {
     await db.collection('community').insertOne({
-      id ,
+      id: id.userId,
       content ,
       imagePath,
       like,
