@@ -18,20 +18,42 @@ router.get('/', async (req, res) => { // 커뮤니티 리스트 겟요청
 });
 router.patch('/', async (req, res) => {  // 커뮤니티 좋아요 패치요청
   try {
-    const like = req.body.like;
-    const id = req.body.id
-    console.log(req.body);
-    const a = await db.collection('community').updateOne({
+    const { id, like, loginUserNic2 } = req.body;
+    await db.collection('community').updateOne({
       _id: new ObjectId(id)
     }, {
-      $set: { like: like }
+      $set: { like: like },
     })
-    console.log(a);
     res.json({
       flag: true,
       message: '좋아요',
-      like: a
     });
+  } catch (err) {
+    console.error(err);
+  }
+});
+router.post('/likeUp', async (req, res) => {  // 커뮤니티 좋아요 중복제거
+  try {
+    const { id, loginUserNic2 } = req.body;
+    await db.collection('community').updateOne({
+      _id: new ObjectId(id)
+    }, {
+      $push: { likeNic: loginUserNic2 }
+    });
+    res.send('ㅗUp')
+  } catch (err) {
+    console.error(err);
+  }
+})
+router.post('/likeDown', async (req, res) => {  // 커뮤니티 좋아요 중복제거
+  try {
+    const { id, loginUserNic2 } = req.body;
+    await db.collection('community').updateOne({
+      _id: new ObjectId(id)
+    }, {
+      $set:  { likeNic: loginUserNic2 }
+    })
+    res.send('ㅗ down')
   } catch (err) {
     console.error(err);
   }
