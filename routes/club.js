@@ -82,6 +82,8 @@ router.get('/:teamName', async (req, res) => {
   }
 });
 
+
+
 module.exports = router;
 // const express = require('express')
 // const bcrypt = require('bcrypt')

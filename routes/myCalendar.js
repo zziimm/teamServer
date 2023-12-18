@@ -64,6 +64,7 @@ router.post('/insert/:id', async (req, res, next) => {
   const game = req.body.game;
   const joinPersonnel = req.body.joinPersonnel;
   const joinMember = req.body.joinMember;
+  const id = req.body.id;
   try {
       await db.collection('myCalendar').insertOne({
         title,
@@ -79,6 +80,7 @@ router.post('/insert/:id', async (req, res, next) => {
         game,
         joinPersonnel,
         joinMember,
+        id,
         user: req.user._id,
         postId: new ObjectId(req.params.id)
       });
