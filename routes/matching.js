@@ -83,6 +83,18 @@ router.patch('/editMatchPost/:id', async (req, res) => {
       gender
     }
   });
+    await db.collection('myMatchList').updateOne({
+      user: req.user._id, postId: new ObjectId(req.params.id)
+    }, { $set: {
+      title,
+      content,
+      selectDate,
+      district,
+      joinPersonnel,
+      game,
+      gender
+    }
+  });
   await db.collection('myCalendar').updateOne({ user: new ObjectId(req.user._id) }, { $set: { title, start: selectDate } });
     res.json({
       flag: true,
