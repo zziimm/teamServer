@@ -24,10 +24,9 @@ router.get('/', async (req, res) => {
   }
 });
 
-// 참여하기 버튼 누르면 해당 club에 사용자 이름 추가
-router.post('/join', async (req, res) => {
-  const teamName = req.body.teamName;
-  const username = req.body.username;
+router.post('/:teamName/add-member', async (req, res) => {
+  const teamName = req.params.teamName;
+  const nickname = req.body.nickname;
 
   try {
     // 클럽이 존재하는지 확인
@@ -42,7 +41,7 @@ router.post('/join', async (req, res) => {
     }
 
     // 사용자 이름을 해당 클럽에 추가
-    await db.collection('club').updateOne({ teamName }, { $push: { members: username } });
+    await db.collection('club').updateOne({ teamName },  { $addToSet: { members: nickname } });
 
     res.json({
       flag: true,
