@@ -93,4 +93,17 @@ router.patch('/editMatchPost/:id', async (req, res) => {
   }
 });
 
+router.get('search', async (req, res) => { // 검색
+  const matchingData = await db.collection('matching').find({}).toArray();
+  // const communityData = await db.collection('community').find({}).toArray();
+  // const commentNum = await db.collection('communityComment').find({}).toArray();
+  res.json({
+    flag: true,
+    message: '성공적으로 데이터를 가져왔습니다.',
+    // communityData,  
+    // commentNum,
+    matchingData
+  });
+});
+
 module.exports = router;

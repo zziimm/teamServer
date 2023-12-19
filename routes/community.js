@@ -177,8 +177,11 @@ router.post('/communityComment/delete', async( req, res ) => {  // 커뮤니티 
   }
 })
 
-router.get('/del', async(req, res) => {
-  await db.collection('communityComment').deleteMany({})
-})
+
+
+router.get('/del', async(req, res) => {  // all 삭제
+  await db.collection('communityComment').deleteMany({});
+});
+
 
 module.exports = router;
