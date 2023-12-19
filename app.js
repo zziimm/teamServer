@@ -32,7 +32,7 @@ passportConfig();
 connect();
 
 app.use(cors({
-  origin: 'http://localhost:3000',
+  origin: 'https://minton1000.netlify.app',
   credentials: true
 }));
 app.use(morgan('dev'));
