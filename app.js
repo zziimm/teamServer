@@ -47,7 +47,8 @@ app.use(session({
   secret: process.env.COOKIE_SECRET,
   cookie: {
     httpOnly: true,
-    secure: false,
+    secure: true,
+    domain: '.minton1000.netlify.app/'
   },
   name: 'session-cookie'
 }));
