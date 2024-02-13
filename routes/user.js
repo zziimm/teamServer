@@ -7,12 +7,20 @@ const router = express.Router();
 
 
 router.get('/', async (req, res) => {
-  const result = await db.collection('userInfo').find({}).toArray();
-  res.json({
-    flag: true,
-    message: '불러오기 성공',
-    data: result
-  });
+  try {
+    const result = await db.collection('userInfo').find({}).toArray();
+    res.json({
+      flag: true,
+      message: '불러오기 성공',
+      data: result
+    });
+  } catch (err) {
+    console.error(err);
+    res.json({
+      flag: false,
+      message: '불러오기 실패'
+    });
+  }
 });
 
 router.post('/login', (req, res, next) => {
@@ -44,23 +52,31 @@ router.post('/login', (req, res, next) => {
 });
 
 router.get('/loginUser', (req,res) => {
-  res.json({
-    flag: true,
-    message: '유저정보 불러오기 성공',
-    data: req.user
-  });
+  try {
+    res.json({
+      flag: true,
+      message: '유저정보 불러오기 성공',
+      data: req.user
+    });
+  } catch (err) {
+    console.error(err);
+  }
 });
 
 router.post('/logout', (req, res, next) => {
-  req.logout((logoutError) => {
-    if (logoutError) {
-      return next(logoutError);
-    };
-    res.json({
-      flag: true,
-      message: '로그아웃 되었습니다.'
+  try {
+    req.logout((logoutError) => {
+      if (logoutError) {
+        return next(logoutError);
+      };
+      res.json({
+        flag: true,
+        message: '로그아웃 되었습니다.'
+      });
     });
-  });
+  } catch (err) {
+    console.error(err);
+  }
 });
 
 

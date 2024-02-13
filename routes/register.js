@@ -6,20 +6,14 @@ const db = client.db('minton') // board 데이터베이스에 연결
 
 const router = express.Router()
 
-// router.get('/register', (req, res)=>{
-//     res.re
-// })
-
-
 router.post('/', async (req, res) => {
-    const userId = req.body.id
-    const passwd = req.body.passwd
-    const nickname = req.body.nick
-    const userIdRegex = /^[a-zA-Z0-9]{4,10}$/;
-    const teamName = req.body.teamName
-
-
     try {
+        const userId = req.body.id
+        const passwd = req.body.passwd
+        const nickname = req.body.nick
+        const userIdRegex = /^[a-zA-Z0-9]{4,10}$/;
+        const teamName = req.body.teamName
+        
         if (userId === '') {
             throw new Error('ID를 입력해주세요!');
         }

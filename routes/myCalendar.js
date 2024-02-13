@@ -8,8 +8,8 @@ const db = client.db('minton');
 const router = express.Router();
 
 router.get('/', async (req, res) => {
-  console.log('유저'+req.user);
   try {
+    console.log('유저'+req.user);
     if (req.user) {
       const result = await db.collection('myCalendar').find({ user: req.user._id }).toArray();
       console.log(result);
@@ -30,11 +30,11 @@ router.get('/', async (req, res) => {
 });
 
 router.post('/directInsert', async (req, res, next) => {
-  const title = req.body.title;
-  const start = req.body.start;
-  const end = req.body.end;
-  
   try {
+    const title = req.body.title;
+    const start = req.body.start;
+    const end = req.body.end;
+    
     if (req.user) {
       await db.collection('myCalendar').insertOne({
         title,
@@ -58,14 +58,14 @@ router.post('/directInsert', async (req, res, next) => {
 });
 
 router.post('/insert/:id', async (req, res, next) => {
-  const title = req.body.title;
-  const start = req.body.start;
-  const district = req.body.district;
-  const game = req.body.game;
-  const joinPersonnel = req.body.joinPersonnel;
-  const joinMember = req.body.joinMember;
-  const id = req.body.id;
   try {
+    const title = req.body.title;
+    const start = req.body.start;
+    const district = req.body.district;
+    const game = req.body.game;
+    const joinPersonnel = req.body.joinPersonnel;
+    const joinMember = req.body.joinMember;
+    const id = req.body.id;
       await db.collection('myCalendar').insertOne({
         title,
         start,

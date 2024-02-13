@@ -23,31 +23,51 @@ router.get('/', async (req, res) => {
 });
 
 router.post('/matchingInsert', async (req, res) => {
-  const result = req.body;
-  const resultId = await db.collection('matching').insertOne({ ...result, joinMember: [req.user.userId] });
-  await db.collection('myMatchList').insertOne({
-    ...result,
-    user: req.user._id,
-    joinMember: [req.user.userId],
-    postId: resultId.insertedId
-  });
-  await db.collection('myCalendar').insertOne({
-    title: req.body.title,
-    start: req.body.selectDate,
-    user: req.user._id,
-    postId: resultId.insertedId
-  });
-  res.send('저장성공')  
+  try {
+    const result = req.body;
+    const resultId = await db.collection('matching').insertOne({ ...result, joinMember: [req.user.userId] });
+    await db.collection('myMatchList').insertOne({
+      ...result,
+      user: req.user._id,
+      joinMember: [req.user.userId],
+      postId: resultId.insertedId
+    });
+    await db.collection('myCalendar').insertOne({
+      title: req.body.title,
+      start: req.body.selectDate,
+      user: req.user._id,
+      postId: resultId.insertedId
+    });
+    // res.send('저장성공')  
+    res.json({
+      flag: true,
+      message: '등록 성공!'
+    });
+  } catch (err) {
+    console.error(err);
+    res.json({
+      flag: false,
+      message: '등록에 실패했습니다.'
+    });
+  }
 });
 
 router.get('/matchingPost/:id', async (req, res) => {
-  const result = await db.collection('matching').findOne({ _id: new ObjectId(req.params.id) });
-  console.log(result);
-  res.json({
-    flag: true,
-    message: '상세페이지 불러오기 성공',
-    data: result
-  })
+  try {
+    const result = await db.collection('matching').findOne({ _id: new ObjectId(req.params.id) });
+    console.log(result);
+    res.json({
+      flag: true,
+      message: '상세페이지 불러오기 성공',
+      data: result
+    })
+  } catch (err) {
+    console.error(err);
+    res.json({
+      flag: false,
+      message: '불러오기 실패'
+    });
+  }
 });
 
 router.delete('/deleteMatching/:id', async (req, res) => {
@@ -68,9 +88,8 @@ router.delete('/deleteMatching/:id', async (req, res) => {
 });
 
 router.patch('/editMatchPost/:id', async (req, res) => {
-  console.log(req.body);
-  const { title, content, selectDate, district, joinPersonnel, game, gender } = req.body;
   try {
+    const { title, content, selectDate, district, joinPersonnel, game, gender } = req.body;
     await db.collection('matching').updateOne({
       _id: new ObjectId(req.params.id)
     }, { $set: {

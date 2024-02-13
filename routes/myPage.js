@@ -24,9 +24,9 @@ router.get('/matchList', async (req, res) => {
 });
 
 router.post('/cancelMatch', async (req, res) => {
-  const postId = req.body.postId;
-  const userId = req.user._id;
   try {
+    const postId = req.body.postId;
+    const userId = req.user._id;
     await db.collection('myMatchList').deleteOne({ postId: new ObjectId(postId), user: userId });
     await db.collection('myCalendar').deleteOne({ postId: new ObjectId(postId), user: userId });
     await db.collection('matching').updateOne({ _id: new ObjectId(postId)}, { $pull: { joinMember: req.user.userId } });
@@ -48,9 +48,9 @@ router.post('/cancelMatch', async (req, res) => {
 
 // forEach로 멤버수만큼 요청들어옴
 router.post('/winAlert', async (req, res) => {
-  const postId = req.body.postId; // 오브젝트 아님
-  const loginUser = req.user;
   try {
+    const postId = req.body.postId; // 오브젝트 아님
+    const loginUser = req.user;
     if (req.body.game === "단식") {
       // 요청받는 사람
       const user = await db.collection('userInfo').findOne({ userId: req.body.member });
@@ -97,12 +97,11 @@ router.post('/winAlert', async (req, res) => {
 });
 
 router.post('/matchResult', async (req, res) => {
-  const thisPostId = req.body.postId
-  // 승리 요청 보낸 사람
-  const loginUser = req.user;
-
-  
   try {
+    const thisPostId = req.body.postId
+    // 승리 요청 보낸 사람
+    const loginUser = req.user;
+
     const winMemberInMatch = await db.collection('myMatchList').findOne({ winner: { win: 'win', postId: thisPostId } });
     const winMember = await db.collection('userInfo').findOne({ _id: winMemberInMatch?.user });
     console.log('winMember'+winMember);
@@ -177,7 +176,6 @@ router.post('/matchResult', async (req, res) => {
           userData
         });
       }
-
 
     } else {
       // 확인 인원이 다 차지 않았을 때
